@@ -87,31 +87,89 @@ def create_lm_from_im(im):
     return am.T
 
 def create_meaning_vector_from_im(im, alpha=0.85):
-    foo = create_lm_from_im(im)
-    foo = foo*alpha
 
-    length = len(foo)
-    bar = np.ones((length, length), dtype=float)
-    bar = bar/length
-    bar = bar*(1-alpha)
+    # Create Link Matrix and multiply by alpha to get P
+    P = create_lm_from_im(im)
+    P = P * alpha
 
-    baz = foo+bar #G
-    print("baz", baz)
+    # Create Matrix of Random Surf-behaviour and multiply by 1-alpha to get S
+    S = np.ones((len(P), len(P)), dtype=float)/len(P)
+    S = S * (1-alpha)
 
-    bomb = np.zeros((len(baz), len(baz)), dtype=float)
-    for i,s in enumerate(bomb):
-        bomb[i][i] = 1.0 #En
+    # Combine P and S to get the Google Matrix
+    G = P + S #G
 
-    print("bomb", bomb)
+    # Create Identity Matrix En
+    En = np.eye(len(G), dtype=float)
 
-    baz = baz-bomb #G-En
-    print("baz", baz)
+    # Subtract Identity Matrix (En) from Google Matrix (G) to get our A for the formula Ax = B
+    A = G - En #G-En
 
-    print("stuffy", np.zeros((1,3), dtype=float))
-    print("sol", np.linalg.solve(baz, np.zeros((3), dtype=float)))
+    # Create B for the Formula Ax = B. A Vector of Ones is chosen, since a vector of 0s would yield an unusable result.
+    B = np.ones((len(A)), dtype=float)
 
+    # Solve the Formula for x.
+    solution = np.linalg.solve(A, B)
 
-    return None
+    # Normalize the Solution
+    solution_normalizer = np.linalg.norm(solution)
+    normalized_solution = []
+    for result in solution:
+        normalized_result = result / solution_normalizer
+        if normalized_result < 0:
+            normalized_result = 0
+        normalized_solution.append(normalized_result)
 
-E = setupMatrix3()
-create_meaning_vector_from_im(E)
+    return normalized_solution
+
+def create_PageRank_with_NXAlgo(im, alpha=0.85):
+    g = nx.DiGraph(turn_im_into_am(im))
+
+    return list(nx.pagerank(g, alpha=alpha).values())
+
+def plot_graph(A, knoten_gewichte=None):
+    """
+    Funktion zur graphischen Darstellung eines Graphen.
+    Benutzt das 'spring layout', eventuell muss die Funktion mehrere Male ausgeführt werden, bis eine schöne Darstellung
+    des Graphen vorliegt.
+
+    Arguments:
+    A -- Adjazenzmatrix (shape (n_knoten,n_knoten))
+    knoten_gewichte -- Liste mit Gewichte für jeden Knoten im Graphen (bei None erhalten alle Knoten die gleichen Gewichte)
+    """
+
+    if knoten_gewichte is None:
+        knoten_gewichte = np.array([1] * A.shape[0])
+
+    assert (len(knoten_gewichte) == A.shape[0])
+
+    knoten_gewichte = knoten_gewichte / np.mean(knoten_gewichte)
+
+    plt.figure(figsize=(8, 8))
+    G = nx.DiGraph(A)
+    pos = nx.layout.spring_layout(G)
+    options = {
+        'node_color': '#dd0000',
+        'node_size': knoten_gewichte * 2500,
+        'width': 3,
+        'arrowstyle': '-|>',
+        'arrowsize': 12,
+    }
+
+    nx.draw_networkx(G, pos, arrows=True, **options)
+    plt.axis("off")
+    plt.show()
+
+def plot_Graph_from_Im(IM, use_student_made_algo=False):
+    AM = turn_im_into_am(IM)
+
+    if(use_student_made_algo):
+        weights = create_meaning_vector_from_im(IM)
+    else:
+        weights = create_PageRank_with_NXAlgo(IM)
+
+    plot_graph(AM, knoten_gewichte=weights)
+
+E = setupMatrix1()
+plot_Graph_from_Im(E, use_student_made_algo=True)
+plot_Graph_from_Im(E, use_student_made_algo=False)

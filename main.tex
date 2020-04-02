@@ -1,0 +1,73 @@
+%! Author = robin
+%! Date = 31.03.2020
+
+% Preamble
+\documentclass{article}
+
+% Packages
+\usepackage{amsmath}
+\usepackage{subfigure}
+\usepackage{graphicx}
+\usepackage {tikz}
+\usetikzlibrary {positioning}
+
+
+\definecolor {processblue}{cmyk}{0.96,0,0,0}
+
+% Document
+\begin {document}
+
+    \title{Inzidenz- und Adjazenzmatrizen von Graphen}
+    \author{Robin Berberat}
+    \maketitle
+
+    \begin{figure}[h]
+        \centering
+        \begin {tikzpicture}[-latex ,auto ,node distance =4 cm and 5cm ,on grid ,
+        semithick ,
+        state/.style ={ circle ,top color =white , bottom color =white ,
+        draw,black , text=black , minimum width =1 cm}]
+            \node[state] (A) {$v_1$};
+            \node[state] (B) [right = of A] {$v_2$};
+            \node[state] (C) [below = of A] {$v_3$};
+            \node[state] (D) [right = of C] {$v_4$};
+            \path (A) edge [bend right = 15]  node[below =0.15 cm] {$e_1$} (B);
+            \path (A) edge node[below =0.15 cm] {$e_2$} (D);
+            \path (B) edge [bend right = 15]  node[above =0.15 cm] {$e_3$} (A);
+            \path (C) edge node[left =0.15 cm] {$e_4$} (A);
+            \path (D) edge node[right =0.15 cm] {$e_5$} (B);
+        \end{tikzpicture}
+        \caption{Beispiel eines Graphen}
+    \end{figure}
+
+    \section{Inzidenzmatrizen}
+    Eine Inzidenzmatrix eines Graphen, ist eine Matrix, welche die Beziehungen zwischen der Knoten und Kanten des Graphen aufzeichent.
+    Bei n-Knoten und m-Kanten ergibt das eine \(n\times m\)-Matrix. Aus den Werten der Zeilen und Spalten kann man ablesen, welche Knoten \"uber welche Kante miteinander verbunden sind.
+    \begin{figure}[h]
+        \centering
+        \bordermatrix{
+            &e_1&e_2&e_3 &e_4&e_5  \cr
+            v_1& 1 & 1 & -1 & -1 & 0 \cr
+            v_2& -1 & 0 & 1 & 0 & -1 \cr
+            v_3& 0 & 0 & 0 & 1 & 0  \cr
+            v_4& 0 & -1 & 0 & 0 & 1}
+        \caption{Inzidenzmatrix des Beispielgraphen}
+    \end{figure}
+
+    \section{Adjazenzmatrizen}
+    Eine Adjazenzmatrix eines Graphen, ist eine Matrix, welche die Verbindungen zwischen der Knoten des Graphen aufzeichent.
+    Bei n-Knoten ergibt das eine \(n\times n\)-Matrix. Aus den Werten der Zeilen und Spalten kann man ablesen, welche Knoten miteinander verbunden sind.
+
+    \begin{figure}[h]
+        \centering
+        \bordermatrix{
+            &v_1&v_2&v_3 &v_4  \cr
+            v_1& 0 & 1 & 0 & 1 \cr
+            v_2& 1 & 0 & 0 & 0 \cr
+            v_3& 1 & 0 & 0 & 0  \cr
+            v_4& 0 & 1 & 0 & 0 }
+        \caption{Adjazenzmatrix des Beispielgraphen}
+    \end{figure}
+
+
+\end{document}
