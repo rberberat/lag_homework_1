@@ -37,13 +37,20 @@
             \path (C) edge node[left =0.15 cm] {$e_4$} (A);
             \path (D) edge node[right =0.15 cm] {$e_5$} (B);
         \end{tikzpicture}
-        \caption{Beispiel eines Graphen}
+        \caption{Beispiel eines gerichteten Graphen}
     \end{figure}
+
+    \newpage
 
     \section{Inzidenzmatrizen}
     Eine Inzidenzmatrix eines Graphen, ist eine Matrix, welche die Beziehungen zwischen der Knoten und Kanten des Graphen aufzeichent.
-    Bei n-Knoten und m-Kanten ergibt das eine \(n\times m\)-Matrix. Aus den Werten der Zeilen und Spalten kann man ablesen, welche Knoten \"uber welche Kante miteinander verbunden sind.
-    \begin{figure}[h]
+    Bei n-Knoten und m-Kanten ergibt das eine \(n\times m\)-Matrix.
+    Aus den Werten der Zeilen und Spalten kann man ablesen, welche Knoten mit welchen Kanten verbunden sind.
+    Steht bei der \(i\)-ten Zeile und der \(j\)-ten Spalte eine 0, ist dieser Knoten nicht mit einer Kante verbunden.
+    Steht dort aber eine 1, ist der Knoten mit der Kanten verbunden.
+    Bei gerichteten Graphen, kann zus\"atzlich noch die Richtung der Kante denotiert werden, in dem die Verbindung mit 1 (ausgehend) oder -1 (eingehend) beschrieben wird.
+
+    \begin{figure}[h!]
         \centering
         \bordermatrix{
             &e_1&e_2&e_3 &e_4&e_5  \cr
@@ -56,9 +63,13 @@
 
     \section{Adjazenzmatrizen}
     Eine Adjazenzmatrix eines Graphen, ist eine Matrix, welche die Verbindungen zwischen der Knoten des Graphen aufzeichent.
-    Bei n-Knoten ergibt das eine \(n\times n\)-Matrix. Aus den Werten der Zeilen und Spalten kann man ablesen, welche Knoten miteinander verbunden sind.
+    Bei n-Knoten ergibt das eine \(n\times n\)-Matrix.
+    Aus den Werten der Zeilen und Spalten kann man ablesen, welche Knoten miteinander verbunden sind.
+    Sind zwei Knoten miteinander verbunden, findet man an deren Kreuzung von Zeile und Spalte eine 1, sonst eine 0.
+    Bei gerichteten Graphen wird allerding nur die ausgehende Verbindung angegeben.
+    Das bedeutet, dass wenn zwei Knoten miteinander verbunden sind, wird nur in der Zeile vom ausgehenden Knoten und in der Spalte vom eingehenden Knoten eine 1 gesetzt.
 
-    \begin{figure}[h]
+    \begin{figure}[h!]
         \centering
         \bordermatrix{
             &v_1&v_2&v_3 &v_4  \cr
