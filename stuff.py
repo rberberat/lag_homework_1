@@ -120,12 +120,111 @@ def create_meaning_vector_from_im(im, alpha=0.85):
             normalized_result = 0
         normalized_solution.append(normalized_result)
 
+        for i, s in enumerate(normalized_solution):
+            normalized_solution[i] = round(s, 5)
+
+    return normalized_solution
+
+def alternate_pagerank(im, alpha= 0.85):
+    # Create Link Matrix and multiply by alpha to get P
+    P = create_lm_from_im(im)
+    P = P * alpha
+
+    # Create Matrix of Random Surf-behaviour and multiply by 1-alpha to get S
+    S = np.ones((len(P), len(P)), dtype=float)/len(P)
+    S = S * (1-alpha)
+
+    # Combine P and S to get the Google Matrix
+    G = P + S #G
+
+    # Create Identity Matrix En
+    En = np.eye(len(G), dtype=float)
+
+    # Subtract Identity Matrix (En) from Google Matrix (G) to get our A for the formula Ax = B
+    A = G - En #G-En
+
+    # Create B for the Formula Ax = B. A Vector of Ones is chosen, since a vector of 0s would yield an unusable result.
+    B = np.zeros((len(A)), dtype=float)
+    B[1] = 1
+
+    # Solve the Formula for x.
+    solution = np.linalg.solve(A, B)
+
+    # Normalize the Solution
+    solution_normalizer = np.linalg.norm(solution)
+    normalized_solution = []
+    for result in solution:
+        normalized_result = result / solution_normalizer
+        if normalized_result < 0:
+            normalized_result = 0
+        normalized_solution.append(normalized_result)
+
+    for i, s in enumerate(normalized_solution):
+        normalized_solution[i] = round(s, 5)
+
+    return normalized_solution
+
+def more_alternate_pagerank(im, alpha= 0.85):
+    import scipy.linalg
+
+    # Create Link Matrix and multiply by alpha to get P
+    P = create_lm_from_im(im)
+    P = P * alpha
+
+    # Create Matrix of Random Surf-behaviour and multiply by 1-alpha to get S
+    S = np.ones((len(P), len(P)), dtype=float) / len(P)
+    S = S * (1 - alpha)
+
+    # Combine P and S to get the Google Matrix
+    G = P + S  # G
+
+    # Create Identity Matrix En
+    En = np.eye(len(G), dtype=float)
+
+    # Subtract Identity Matrix (En) from Google Matrix (G) to get our A for the formula Ax = B
+    A = G - En  # G-En
+
+    (_, rref) = scipy.linalg.qr(A)
+
+    # Create B for the Formula Ax = B. A Vector of Ones is chosen, since a vector of 0s would yield an unusable result.
+    B = np.zeros((len(A)), dtype=float)
+    B[-1] = 1
+
+    # Solve the Formula for x.
+    solution = np.linalg.solve(rref, B)
+
+    # Normalize the Solution
+    solution_normalizer = np.linalg.norm(solution)
+    normalized_solution = []
+    for result in solution:
+        normalized_result = result / solution_normalizer
+        if normalized_result < 0:
+            normalized_result = 0
+        normalized_solution.append(normalized_result)
+
+    for i, s in enumerate(normalized_solution):
+        normalized_solution[i] = round(s, 5)
+
     return normalized_solution
 
 def create_PageRank_with_NXAlgo(im, alpha=0.85):
     g = nx.DiGraph(turn_im_into_am(im))
 
-    return list(nx.pagerank(g, alpha=alpha).values())
+    solution = list(nx.pagerank(g, alpha=alpha).values())
+
+    # Normalize the Solution
+    solution_normalizer = np.linalg.norm(solution)
+    normalized_solution = []
+    for result in solution:
+        normalized_result = result / solution_normalizer
+        if normalized_result < 0:
+            normalized_result = 0
+        normalized_solution.append(normalized_result)
+
+    for i, s in enumerate(normalized_solution):
+        normalized_solution[i] = round(s, 5)
+
+    return normalized_solution
 
 def plot_graph(A, knoten_gewichte=None):
     """
@@ -171,5 +270,7 @@ def plot_Graph_from_Im(IM, use_student_made_algo=False):
     plot_graph(AM, knoten_gewichte=weights)
 
 E = setupMatrix1()
-plot_Graph_from_Im(E, use_student_made_algo=True)
-plot_Graph_from_Im(E, use_student_made_algo=False)
+print(create_meaning_vector_from_im(E))
+print(create_PageRank_with_NXAlgo(E))
+print(alternate_pagerank(E))
+print(more_alternate_pagerank(E))
